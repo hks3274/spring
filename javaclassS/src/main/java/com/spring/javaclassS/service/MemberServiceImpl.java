@@ -13,12 +13,12 @@ import com.spring.javaclassS.vo.MemberVO;
 
 @Service
 public class MemberServiceImpl implements MemberService {
-	
-	@Autowired
-	JavaclassProvide provide;
-	
+
 	@Autowired
 	MemberDAO memberDAO;
+	
+	@Autowired
+	JavaclassProvide javaclassProvide;
 
 	@Override
 	public MemberVO getMemberIdCheck(String mid) {
@@ -51,20 +51,21 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
-	public String fileUpload(MultipartFile fName, String mid) {
-		//파일명 중복처리를 위해 UUID객체 활용
+	public String fileUpload(MultipartFile fName, String mid, String photo) {
+		// 파일이름 중복처리를 위해 UUID객체 활용
 		UUID uid = UUID.randomUUID();
-		String uidName = uid.toString().substring(0,8);
 		String oFileName = fName.getOriginalFilename();
-		String sFileName = mid +"_"+ uidName+"_" + oFileName;
+		String sFileName = mid + "_" + uid.toString().substring(0,8) + "_" + oFileName;
 		
-		//서버에 파일 올리기
 		try {
-			provide.writeFile(fName, sFileName, "member");
+			// 서버에 파일 올리기
+			javaclassProvide.writeFile(fName, sFileName, "member");
+			
+			// 기존 사진파일이 noimage.jpg가 아니라면 서버에서 삭제시킨다.
+			if(!photo.equals("noimage.jpg")) javaclassProvide.deleteFile(photo, "member");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
 		return sFileName;
 	}
 
@@ -74,8 +75,13 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
-	public int setMemberUPdateOk(MemberVO vo) {
-		return memberDAO.setMemberUPdateOk(vo);
+	public int setMemberUpdateOk(MemberVO vo) {
+		return memberDAO.setMemberUpdateOk(vo);
+	}
+
+	@Override
+	public int setUserDel(String mid) {
+		return memberDAO.setUserDel(mid);
 	}
 	
 }

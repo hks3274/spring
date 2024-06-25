@@ -18,10 +18,12 @@ public interface MemberDAO {
 
 	public void setMemberInforUpdate(@Param("mid") String mid, @Param("point") int point);
 
-	public int setPwdChangeOk(@Param("mid")String mid,@Param("pwd") String pwd);
+	public int setPwdChangeOk(@Param("mid") String mid, @Param("pwd") String pwd);
 
 	public ArrayList<MemberVO> getMemberList(@Param("level") int level);
 
-	public int setMemberUPdateOk(@Param("vo") MemberVO vo);
+	public int setMemberUpdateOk(@Param("vo") MemberVO vo);
+
+	public int setUserDel(@Param("mid") String mid);
 
 }
