@@ -64,23 +64,23 @@
 <jsp:include page="/WEB-INF/views/include/slide2.jsp" />
 <p><br/></p>
 <div class="container">
-  <h2 class="text-center">자 료 실 리 스 트(${part})</h2>
+  <h2 class="text-center">자 료 실 리 스 트(${pageVO.part})</h2>
   <br/>
   <table class="table table-borderless m-0 p-0">
     <tr>
       <td>
         <form name="partForm">
           <select name="part" id="part" onchange="partCheck()">
-            <option ${part=="전체" ? "selected" : ""}>전체</option>
-            <option ${part=="학습" ? "selected" : ""}>학습</option>
-            <option ${part=="여행" ? "selected" : ""}>여행</option>
-            <option ${part=="음식" ? "selected" : ""}>음식</option>
-            <option ${part=="기타" ? "selected" : ""}>기타</option>
+            <option ${pageVO.part=="전체" ? "selected" : ""}>전체</option>
+            <option ${pageVO.part=="학습" ? "selected" : ""}>학습</option>
+            <option ${pageVO.part=="여행" ? "selected" : ""}>여행</option>
+            <option ${pageVO.part=="음식" ? "selected" : ""}>음식</option>
+            <option ${pageVO.part=="기타" ? "selected" : ""}>기타</option>
           </select>
         </form>
       </td>
       <td class="text-right">
-        <a href="pdsInput?part=${part}" class="btn btn-success">자료올리기</a>
+        <a href="pdsInput?part=${pageVO.part}" class="btn btn-success">자료올리기</a>
       </td>
     </tr>
   </table>
@@ -95,12 +95,12 @@
       <th>다운수</th>
       <th>비고</th>
     </tr>
-    <c:set var="curScrStartNo" value="${curScrStartNo}"/>
+    <c:set var="curScrStartNo" value="${pageVO.curScrStartNo}"/>
     <c:forEach var="vo" items="${vos}" varStatus="st">
       <tr>
         <td>${curScrStartNo}</td>
         <td>
-        	<a href="pdsContent?idx=${vo.idx}&pag=${pag}&pageSize=${pageSize}&part=${part}">${vo.title}</a>
+        	<a href="pdsContent?idx=${vo.idx}&pag=${pageVO.pag}&pageSize=${pageVO.pageSize}&part=${pageVO.part}">${vo.title}</a>
 		      <c:if test="${vo.hour_diff <= 24}"><img src="${ctp}/images/new.gif" /></c:if>  
         </td>
         <td>${vo.nickName}</td>
@@ -112,7 +112,7 @@
         	<c:set var="fNames" value="${fn:split(vo.FName,'/')}" />
         	<c:set var="fSNames" value="${fn:split(vo.FSName,'/')}" />
         	<c:forEach var="fName" items="${fNames}" varStatus="st">
-        		<a href="${ctp}/images/pds/${fSNames[st.index]}" download="${fName}" onclick="downNumCheck(${vo.idx})">${fName}</a><br/>
+        		<a href="${ctp}/pds/${fSNames[st.index]}" download="${fName}" onclick="downNumCheck(${vo.idx})">${fName}</a><br/>
         	</c:forEach>
         	( <fmt:formatNumber value="${vo.FSize/1024}"  pattern="#,##0"/>KByte)
         </td>
@@ -131,14 +131,14 @@
   <!-- 블록페이지 시작 -->
 	<div class="text-center">
 	  <ul class="pagination justify-content-center">
-		  <c:if test="${pag > 1}"><li class="page-item"><a class="page-link text-secondary" href="pdsList?part=${part}&pag=1&pageSize=${pageSize}">첫페이지</a></li></c:if>
-		  <c:if test="${curBlock > 0}"><li class="page-item"><a class="page-link text-secondary" href="pdsList?part=${part}&pag=${(curBlock-1)*blockSize + 1}&pageSize=${pageSize}">이전블록</a></li></c:if>
-		  <c:forEach var="i" begin="${(curBlock*blockSize)+1}" end="${(curBlock*blockSize) + blockSize}" varStatus="st">
-		    <c:if test="${i <= totPage && i == pag}"><li class="page-item active"><a class="page-link bg-secondary border-secondary" href="pdsList?part=${part}&pag=${i}&pageSize=${pageSize}">${i}</a></li></c:if>
-		    <c:if test="${i <= totPage && i != pag}"><li class="page-item"><a class="page-link text-secondary" href="pdsList?part=${part}&pag=${i}&pageSize=${pageSize}">${i}</a></li></c:if>
+		  <c:if test="${pageVO.pag > 1}"><li class="page-item"><a class="page-link text-secondary" href="pdsList?part=${pageVO.part}&pag=1&pageSize=${pageVO.pageSize}">첫페이지</a></li></c:if>
+		  <c:if test="${pageVO.curBlock > 0}"><li class="page-item"><a class="page-link text-secondary" href="pdsList?part=${pageVO.part}&pag=${(pageVO.curBlock-1)*pageVO.blockSize + 1}&pageSize=${pageVO.pageSize}">이전블록</a></li></c:if>
+		  <c:forEach var="i" begin="${(pageVO.curBlock*pageVO.blockSize)+1}" end="${(pageVO.curBlock*pageVO.blockSize) + pageVO.blockSize}" varStatus="st">
+		    <c:if test="${i <= pageVO.totPage && i == pageVO.pag}"><li class="page-item active"><a class="page-link bg-secondary border-secondary" href="pdsList?part=${pageVO.part}&pag=${i}&pageSize=${pageVO.pageSize}">${i}</a></li></c:if>
+		    <c:if test="${i <= pageVO.totPage && i != pageVO.pag}"><li class="page-item"><a class="page-link text-secondary" href="pdsList?part=${pageVO.part}&pag=${i}&pageSize=${pageVO.pageSize}">${i}</a></li></c:if>
 		  </c:forEach>
-		  <c:if test="${curBlock < lastBlock}"><li class="page-item"><a class="page-link text-secondary" href="pdsList?part=${part}&pag=${(curBlock+1)*blockSize+1}&pageSize=${pageSize}">다음블록</a></li></c:if>
-		  <c:if test="${pag < totPage}"><li class="page-item"><a class="page-link text-secondary" href="pdsList?part=${part}&pag=${totPage}&pageSize=${pageSize}">마지막페이지</a></li></c:if>
+		  <c:if test="${pageVO.curBlock < pageVO.lastBlock}"><li class="page-item"><a class="page-link text-secondary" href="pdsList?part=${pageVO.part}&pag=${(pageVO.curBlock+1)*blockSize+1}&pageSize=${pageVO.pageSize}">다음블록</a></li></c:if>
+		  <c:if test="${pageVO.pag < pageVO.totPage}"><li class="page-item"><a class="page-link text-secondary" href="pdsList?part=${pageVO.part}&pag=${pageVO.totPage}&pageSize=${pageVO.pageSize}">마지막페이지</a></li></c:if>
 	  </ul>
 	</div>
 	<!-- 블록페이지 끝 -->

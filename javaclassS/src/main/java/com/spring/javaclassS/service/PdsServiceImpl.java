@@ -1,10 +1,18 @@
 package com.spring.javaclassS.service;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import com.spring.javaclassS.common.JavaclassProvide;
 import com.spring.javaclassS.dao.PdsDAO;
 import com.spring.javaclassS.vo.PdsVO;
 
@@ -12,9 +20,74 @@ import com.spring.javaclassS.vo.PdsVO;
 public class PdsServiceImpl implements PdsService {
 	@Autowired
 	PdsDAO pdsDAO;
+	
+	@Autowired
+	JavaclassProvide javaclassProvide;
+	
 
 	@Override
-	public List<PdsVO> getPdsList() {
-		return pdsDAO.getPdsList();
+	public int setPdsUpload(MultipartHttpServletRequest mFile, PdsVO vo) {
+		//파일 업로드 
+		int res =0;
+		try {
+			List<MultipartFile> fileList = mFile.getFiles("file");
+			String oFileNames = "";
+			String sFileNames = "";
+			int fileSizes = 0;
+			
+			for(MultipartFile file : fileList) {
+				//System.out.println("원본파일 : " + file.getOriginalFilename());
+				String oFileName = file.getOriginalFilename();
+				String sFileName = javaclassProvide.saveFileName(oFileName);
+				
+				javaclassProvide.writeFile(file, sFileName, "pds");
+				
+				oFileNames += oFileName +"/";	
+				sFileNames += sFileName +"/";
+				fileSizes += file.getSize();
+			
+			}
+			oFileNames = oFileNames.substring(0,oFileNames.length()-1);
+			sFileNames = sFileNames.substring(0,sFileNames.length()-1);
+			
+			//파일 업로드 작업완료 후 모든 자료의 정보를 DB에 담아준다.
+			vo.setFName(oFileNames);
+			vo.setFSName(sFileNames);
+			vo.setFSize(fileSizes);
+			
+			res = pdsDAO.setPdsUpload(vo);
+			
+		} catch (IOException e) {e.printStackTrace();}
+		
+		return res;
+	}
+
+	@Override
+	public List<PdsVO> getPdsList(int startIndexNo, int pageSize, String part) {
+		return pdsDAO.getPdsList(startIndexNo, pageSize, part);
+	}
+
+	@Override
+	public int setPdsDownNumPlus(int idx) {
+		return pdsDAO.setPdsDownNumPlus(idx);
+	}
+
+	@Override
+	public int setPdsDelete(int idx, String fSName, HttpServletRequest request) {
+		//파일 삭제 처리
+		String realPath = request.getSession().getServletContext().getRealPath("/resources/data/pds/");
+		String[] fSNames = fSName.split("/");
+				
+		//서버에 저장된 실제 파일을 삭제처리한다.
+		for (int i = 0; i < fSNames.length; i++) {
+			new File(realPath + fSNames[i]).delete();
+		}
+		
+		return pdsDAO.setPdsDelete(idx);
+	}
+
+	@Override
+	public PdsVO getPdsContent(int idx) {
+		return pdsDAO.getPdsContent(idx);
 	}
 }

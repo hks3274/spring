@@ -40,7 +40,7 @@
     // 다운로드수 증가시키기
     function downNumCheck(idx) {
     	$.ajax({
-    		url  : "PdsDownNumCheck.pds",
+    		url  : "${ctp}/pds/pdsDownNumCheck",
     		type : "post",
     		data : {idx : idx},
     		success:function() {
@@ -86,7 +86,7 @@
     	}
     	
     	$.ajax({
-    		url  : "ReviewInputOk.ad",
+    		url  : "${ctp}/review/reviewInputOk",
     		type : "post",
     		data : query,
     		success:function(res) {
@@ -105,7 +105,7 @@
     	if(!ans) return false;
     	
     	$.ajax({
-    		url  : "ReviewDelete.ad",
+    		url  : "${ctp}/review/reviewDelete",
     		type : "post",
     		data : {idx : idx},
     		success:function(res) {
@@ -146,7 +146,7 @@
     	}
     	
     	$.ajax({
-    		url  : "ReviewReplyInputOk.ad",
+    		url  : "${ctp}/review/reviewReplyInputOk",
     		type : "post",
     		data : query,
     		success:function(res) {
@@ -219,17 +219,17 @@
       <th>올린이</th>
       <td>${vo.nickName}</td>
       <th>올린날짜</th>
-      <td>${fn:substring(vo.fDate,0,fn:length(vo.fDate)-2)}</td>
+      <td>${fn:substring(vo.FDate,0,fn:length(vo.FDate)-2)}</td>
     </tr>
     <tr>
       <th>파일명</th>
       <td>
-        <c:set var="fNames" value="${fn:split(vo.fName,'/')}"/>
-        <c:set var="fSNames" value="${fn:split(vo.fSName,'/')}"/>
+        <c:set var="fNames" value="${fn:split(vo.FName,'/')}"/>
+        <c:set var="fSNames" value="${fn:split(vo.FSName,'/')}"/>
         <c:forEach var="fName" items="${fNames}" varStatus="st">
-          <a href="${ctp}/images/pds/${fSNames[st.index]}" download="${fName}" onclick="downNumCheck(${vo.idx})">${fName}</a><br/>
+          <a href="${ctp}/pds/${fSNames[st.index]}" download="${fName}" onclick="downNumCheck(${vo.idx})">${fName}</a><br/>
         </c:forEach>
-        (<fmt:formatNumber value="${vo.fSize/1024}" pattern="#,##0" />KByte)
+        (<fmt:formatNumber value="${vo.FSize/1024}" pattern="#,##0" />KByte)
       </td>
       <th>다운횟수</th>
       <td>${vo.downNum}</td>
@@ -250,7 +250,7 @@
     </tr>
     <tr>
       <td colspan="4">
-        <input type="button" value="돌아가기" onclick="location.href='PdsList.pds?pag=${pag}&pageSize=${pageSize}&part=${part}';" class="btn btn-primary"/>
+        <input type="button" value="돌아가기" onclick="location.href='pdsList?pag=${pag}&pageSize=${pageSize}&part=${part}';" class="btn btn-primary"/>
       </td>
     </tr>
   </table>
@@ -293,7 +293,7 @@
 	      <div class="row">
 	        <div class="col ml-2">
 	          <b>${vo.nickName}</b>
-	          <span style="font-size:11px">${fn:substring(vo.rDate, 0, 10)}</span>
+	          <span style="font-size:11px">${fn:substring(vo.RDate, 0, 10)}</span>
 	          <c:if test="${vo.mid == sMid || sLevel == 0}"><a href="javascript:reviewDelete(${vo.idx})" title="리뷰삭제" class="badge badge-danger">x</a></c:if>
 	          <a href="#" onclick="reviewReply('${vo.idx}','${vo.nickName}','${fn:replace(vo.content,newLine,'<br>')}')" title="댓글달기" data-toggle="modal" data-target="#myModal" class="badge badge-secondary">▤</a>
 	        </div>
@@ -330,7 +330,7 @@
 		  <c:set var="ext" value="${fn:substring(fSName, len-3, len)}"/>
 		  <c:set var="extLower" value="${fn:toLowerCase(ext)}"/>
 			<c:if test="${extLower == 'jpg' || extLower == 'gif' || extLower == 'png'}">
-        <img src="${ctp}/images/pds/${fSName}" width="85%" />
+        <img src="${ctp}/pds/${fSName}" width="85%" />
       </c:if>
       <hr/>
     </c:forEach>

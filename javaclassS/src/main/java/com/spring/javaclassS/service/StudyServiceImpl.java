@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.spring.javaclassS.common.JavaclassProvide;
 import com.spring.javaclassS.dao.StudyDAO;
@@ -23,11 +25,13 @@ import com.spring.javaclassS.vo.UserVO;
 public class StudyServiceImpl implements StudyService {
 	
 	@Autowired
-	JavaclassProvide provide;
+	JavaclassProvide  javaclassProvide;
 	
 	@Autowired
 	StudyDAO studyDAO;
-
+	
+	
+	
 	@Override
 	public String[] getCityStringArray(String dodo) {
 		String[] strArray = new String[100];
@@ -192,7 +196,7 @@ public class StudyServiceImpl implements StudyService {
 		
 		//서버에 파일 올리기
 		try {
-			provide.writeFile(fName, sFileName, "fileUpload");
+			javaclassProvide.writeFile(fName, sFileName, "fileUpload");
 			res = 1;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -200,6 +204,45 @@ public class StudyServiceImpl implements StudyService {
 		
 		return res;
 	}
+
+	@Override
+	public int multiFileUpload(MultipartHttpServletRequest mFile) {
+		int res = 0;
+		
+		try {
+			List<MultipartFile> fileList = mFile.getFiles("fName");
+			String oFileNames = "";
+			String sFileNames = "";
+			int fileSizes = 0;
+			
+			for(MultipartFile file : fileList) {
+				//System.out.println("원본파일 : " + file.getOriginalFilename());
+				String oFileName = file.getOriginalFilename();
+				String sFileName = javaclassProvide.saveFileName(oFileName);
+				
+				javaclassProvide.writeFile(file, sFileName, "fileUpload");
+				
+				oFileNames += oFileName +"/";	
+				sFileNames += sFileName +"/";
+				fileSizes += file.getSize();
+			
+			}
+			oFileNames = oFileNames.substring(0,oFileNames.length()-1);
+			sFileNames = sFileNames.substring(0,sFileNames.length()-1);
+			
+			System.out.println("원본파일 : "+oFileNames);
+			System.out.println("저장파일 : "+sFileNames);
+			System.out.println("사이즈 : "+fileSizes);
+			
+			res = 1;
+		} catch (IOException e) {e.printStackTrace();}
+		
+		
+		
+		return res;
+	}
+
+	
 
 
 }

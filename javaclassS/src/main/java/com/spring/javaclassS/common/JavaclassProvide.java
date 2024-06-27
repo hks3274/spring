@@ -3,6 +3,7 @@ package com.spring.javaclassS.common;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Calendar;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -28,12 +29,36 @@ public class JavaclassProvide {
 		fos.close();
 	}
 	
+	
+	//파일 삭제
 	public void deleteFile(String photo, String urlPath) {
 		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 		String realPath = request.getSession().getServletContext().getRealPath("/resources/data/"+urlPath+"/");
 		
 		File file = new File(realPath + photo);
 		if(file.exists()) file.delete();
+	}
+	
+	
+	
+	
+	//파일이름 변경(중복방지를 위한 작업)
+	public String saveFileName(String oFileName) {
+		String fileName = "";
+		
+		Calendar cal = Calendar.getInstance();
+		
+		fileName += cal.get(Calendar.YEAR);
+		fileName += cal.get(Calendar.MONTH)+1;
+		fileName += cal.get(Calendar.DATE);
+		fileName += cal.get(Calendar.HOUR_OF_DAY);
+		fileName += cal.get(Calendar.MINUTE);
+		fileName += cal.get(Calendar.SECOND);
+		//fileName += cal.get(Calendar.MILLISECOND);
+		fileName += "_" + oFileName;
+		
+		
+		return fileName;
 	}
 	
 }
