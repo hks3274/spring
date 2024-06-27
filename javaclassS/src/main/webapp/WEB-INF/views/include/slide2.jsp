@@ -3,7 +3,7 @@
 <c:set var="ctp" value="${pageContext.request.contextPath}"/>
   <!-- Automatic Slideshow Images -->
   <div class="mySlides w3-display-container w3-center">
-    <img src="${ctp}/images/la.jpg" style="width:100%; height:250px">
+    <img src="${ctp}/images/1571492339461.jpg" style="width:100%; height:250px">
     <div class="w3-display-bottommiddle w3-container w3-text-white w3-padding-32 w3-hide-small">
       <h3>Los Angeles</h3>
       <p><b>We had the best time playing at Venice Beach!</b></p>   

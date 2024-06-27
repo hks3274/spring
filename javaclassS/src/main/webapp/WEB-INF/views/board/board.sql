@@ -25,6 +25,8 @@ insert into board2 values (default,'admin','관리맨','게시판 서비스를 �
 create table boardReply2(
 	idx 			int not null auto_increment, 	/*댓글 고유번호*/
 	boardIdx 	int not null,									/*원본글(부모글)의 고유번호-외래키로 지정*/ 
+	re_step		int not null,									/*레벨(re_step)에 따른 들여쓰기(계층번호) : 부모댓글의 re_step은 0이다. 대댓글의 경우는 부모re__step+1로 처리한다.*/
+	re_order	int not null,									/*댓글의 순서 결정. 부모 댓글 1 대댓글의 경우 부모댓글보다 큰댓글은 re_order+1처리하고 자신의 부모댓글의 re_order보다 +1한다.*/
 	mid				varchar(20) not null, 				/*댓글 올린이의 아이디*/
 	nickName	varchar(20) not null, 				/*댓글 올린이의 닉네임*/
 	wDate			datetime default now(),				/*댓글 올린 날짜/시간*/
@@ -35,6 +37,9 @@ create table boardReply2(
 	on update cascade 
 	on delete restrict
 );
+
+	/*ref				int not null,								/*공지글을 처리할거면 사용(공지글- ref=0)*/*/
+
 drop table boardReply2;
 desc boardReply2;
 

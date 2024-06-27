@@ -302,5 +302,12 @@ public class StudyController {
 		return res;
 	}
 	
+	@RequestMapping(value = "/fileUpload/multiFile", method = RequestMethod.GET)
+	public String multiFileGrt(HttpServletRequest request) {
+		
+		
+		return "study/fileUpload/multiFile";
+	}
+	
 	
 }
