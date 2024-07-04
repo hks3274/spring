@@ -1,24 +1,22 @@
 package com.spring.javaclassS.service;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
-
-import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.spring.javaclassS.common.JavaclassProvide;
 import com.spring.javaclassS.dao.StudyDAO;
 import com.spring.javaclassS.vo.CrimeVO;
+import com.spring.javaclassS.vo.KakaoAddressVO;
 import com.spring.javaclassS.vo.UserVO;
 
 @Service
@@ -240,6 +238,49 @@ public class StudyServiceImpl implements StudyService {
 		
 		
 		return res;
+	}
+
+	@Override
+	public Map<String, Integer> analyzer(String content) {
+		int wordFrequenciesToReturn = 10;
+		int minWordLength = 2;
+		
+		Map<String, Integer> frequencyMap = new HashMap<>();
+		
+		String[] words = content.split("\\s+");
+		
+		for (String word : words) {
+			if(word.length() >= minWordLength) {
+				word = word.toLowerCase();
+				frequencyMap.put(word, frequencyMap.getOrDefault(word, 0) + 1);
+			}
+		}
+		
+	 return frequencyMap.entrySet().stream()
+        .sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue()))
+        .limit(wordFrequenciesToReturn)
+        .collect(HashMap::new, (m, e) -> m.put(e.getKey(), e.getValue()), HashMap::putAll);
+		
+	}
+
+	@Override
+	public KakaoAddressVO getKakaoAddressSearch(String address) {
+		return studyDAO.getKakaoAddressSearch(address);
+	}
+
+	@Override
+	public void setKakaoAddressInput(KakaoAddressVO vo) {
+		studyDAO.setKakaoAddressInput(vo);
+	}
+
+	@Override
+	public ArrayList<KakaoAddressVO> getKakaoAddressList() {
+		return studyDAO.getKakaoAddressList();
+	}
+
+	@Override
+	public int setKakaoAddressDelete(String address) {
+		return studyDAO.setKakaoAddressDelete(address);
 	}
 
 	
